@@ -9,7 +9,7 @@
                      "metadata": {
                          "contains": {
                              "pos": {
-                                 "producer": "org.lappsgrid.example.StanfordTagger:0.0.1-SNAPSHOT",
+                                 "producer": "org.lappsgrid.example.NLTKTagger:0.0.1-SNAPSHOT",
                                  "type": "annotation:tagger"
                              }
                          }

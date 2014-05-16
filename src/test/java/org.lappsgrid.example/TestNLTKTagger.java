@@ -55,14 +55,14 @@ public class TestNLTKTagger {
         // Test Text input
         Data output1 = tagger.execute(input1);
         System.out.println(output1.getPayload());
-//        System.out.println(target1);
-//        System.out.println();
-//        Assert.assertTrue("Unexpected JSON output!", jsonEqual(output1.getPayload(), target1));
+        System.out.println(target1);
+        System.out.println();
+        Assert.assertTrue("Unexpected JSON output!", jsonEqual(output1.getPayload(), target1));
 //
 //
-//        // Test JSON input
-//        Data output2 = tagger.execute(input2);
-//        System.out.println(output2.getPayload());
-//        Assert.assertTrue("Unexpected JSON output!", jsonEqual(output2.getPayload(), target2));
+        // Test JSON input
+        Data output2 = tagger.execute(input2);
+        System.out.println(output2.getPayload());
+        Assert.assertTrue("Unexpected JSON output!", jsonEqual(output2.getPayload(), target2));
     }
 }
