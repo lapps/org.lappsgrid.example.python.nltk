@@ -128,6 +128,10 @@
 
     <repositories>
         <repository>
+            <id>thirdparty</id>
+            <url>http://eldrad.cs-i.brandeis.edu:6061/nexus/content/repositories/thirdparty</url>
+        </repository>
+        <repository>
             <id>anc-releases</id>
             <url>http://www.anc.org:8080/nexus/content/repositories/releases/</url>
             <releases>
