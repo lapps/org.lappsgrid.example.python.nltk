@@ -1,0 +1,61 @@
+{
+    "@context":"http://vocab.lappsgrid.org/context-1.0.0.jsonld",
+                                                                    "metadata": {},
+    "text": {
+        "@value": "How are you today?"
+    },
+    "steps": [
+        {
+                     "metadata": {
+                         "contains": {
+                             "pos": {
+                                 "producer": "org.lappsgrid.example.StanfordTagger:0.0.1-SNAPSHOT",
+                                 "type": "annotation:tagger"
+                             }
+                         }
+                     },
+            "annotations": [
+                {
+                    "@type": "Token",
+                    "id": "pos0",
+                    "features": {
+                        "word": "How",
+                        "pos": "WRB"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos1",
+                    "features": {
+                        "word": "are",
+                                                "pos": "VBP"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos2",
+                    "features": {
+                        "word": "you","pos": "PRP"
+
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos3",
+                    "features": {
+                        "word": "today","pos": "NN"
+
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos4",
+                    "features": {
+                        "word": "?","pos": "."
+
+                    }
+                }
+            ]
+        }
+    ]
+}

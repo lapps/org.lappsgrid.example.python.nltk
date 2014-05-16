@@ -1,0 +1,125 @@
+{
+    "@context": "http://vocab.lappsgrid.org/context-1.0.0.jsonld",
+    "text": {
+        "@value": "Hi. How are you? This is Mike."
+    },
+    "steps": [
+        {
+            "annotations": [
+                {
+                    "id": "s0",
+                    "start": 0,
+                    "@type": "Sentence",
+                    "end": 16
+                },
+                {
+                    "id": "s1",
+                    "start": 17,
+                    "@type": "Sentence",
+                    "end": 30
+                }
+            ],
+            "metadata": {
+                "contains": {
+                    "Sentence": {
+                        "producer": "edu.brandeis.cs.lappsgrid.opennlp.Splitter:0.0.4",
+                        "type": "splitter:opennlp"
+                    }
+                }
+            }
+        },
+        {
+            "metadata": {
+                "contains": {
+                    "pos": {
+                        "producer": "org.lappsgrid.example.StanfordTagger:0.0.1-SNAPSHOT",
+                        "type": "annotation:tagger"
+                    }
+                }
+            },
+            "annotations": [
+                {
+                    "@type": "Token",
+                    "id": "pos0",
+                    "features": {
+                        "word": "Hi",
+                        "pos": "NN"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos1",
+                    "features": {
+                        "word": ".",
+                        "pos": "."
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos2",
+                    "features": {
+                        "word": "How",
+                        "pos": "WRB"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos3",
+                    "features": {
+                        "word": "are",
+                        "pos": "VBP"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos4",
+                    "features": {
+                        "word": "you",
+                        "pos": "PRP"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos5",
+                    "features": {
+                        "word": "?",
+                        "pos": "."
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos6",
+                    "features": {
+                        "word": "This",
+                        "pos": "DT"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos7",
+                    "features": {
+                        "word": "is",
+                        "pos": "VBZ"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos8",
+                    "features": {
+                        "word": "Mike",
+                        "pos": "NNP"
+                    }
+                },
+                {
+                    "@type": "Token",
+                    "id": "pos9",
+                    "features": {
+                        "word": ".",
+                        "pos": "."
+                    }
+                }
+            ]
+        }
+    ],
+    "metadata": {}
+}

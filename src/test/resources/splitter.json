@@ -1,0 +1,33 @@
+{
+    "@context":"http://vocab.lappsgrid.org/context-1.0.0.jsonld",
+    "text": {
+        "@value": "Hi. How are you? This is Mike."
+    },
+    "steps": [
+        {
+            "annotations": [
+                {
+                    "id": "s0",
+                    "start": 0,
+                    "@type": "Sentence",
+                    "end": 16
+                },
+                {
+                    "id": "s1",
+                    "start": 17,
+                    "@type": "Sentence",
+                    "end": 30
+                }
+            ],
+            "metadata": {
+                "contains": {
+                    "Sentence": {
+                        "producer": "edu.brandeis.cs.lappsgrid.opennlp.Splitter:0.0.4",
+                        "type": "splitter:opennlp"
+                    }
+                }
+            }
+        }
+    ],
+    "metadata": {}
+}

@@ -1,0 +1,435 @@
+
+///////////////////////<CUSTOMIZE>/////////////////////////////////
+def HOST = "127.0.0.1:8080"
+def SERVICE_WAR = "helloworld-0.0.1-SNAPSHOT.war"
+VERSION="0.0.1"
+def SERVICE_PATH = "${SERVICE_WAR}".replaceAll(".war", "").replaceAll("#", "/")
+def SERVICE_CLASS = "HelloWorld"
+def ROOT = "http://${HOST}/${SERVICE_PATH}/services"
+def SERVICE_URL = "${ROOT}/${SERVICE_CLASS}"
+def SERVICE_WSDL = "${SERVICE_URL}?wsdl"
+
+def DATABASE='langrid'
+def ROLENAME='langrid'
+def PASSWORD='langrid'
+
+def IS_DUPLICATE = false
+///////////////////////</CUSTOMIZE>/////////////////////////////////
+
+
+///////////////////////<COMMON>/////////////////////////////////
+def DOMAIN = 'lapps.nlp'
+def SERVICE = 'service.type.processor'
+def DATASOURCE = 'service.type.datasource'
+def CORPUS_TYPE = 'resource.type.corpus'
+def OTHER_SERVICE = 'service.type.other'
+
+def NONE_TYPE = 'resource.type.null'
+def NONE_ID = 'resource.id.none'
+
+def APACHE = 'Apache 2.0'
+def GPL = 'GPL'
+
+
+
+def COPYRIGHT = 'Copyright 2014 lapps.anc.org'
+def License = 'Apache License, Version 2.0'
+
+def urlWebService='https://raw.githubusercontent.com/chunqishi/lapps_lddl_brandeis/master/src/lddl-scripts/WebService.wsdl'
+def urlDataSource='https://raw.githubusercontent.com/chunqishi/lapps_lddl_brandeis/master/src/lddl-scripts/Datasource.wsdl'
+///////////////////////</COMMON>/////////////////////////////////
+
+
+///////////////////////<DOMAIN>/////////////////////////////////
+if ( ! IS_DUPLICATE ) {
+
+domain {
+    id DOMAIN
+    name 'Natural Language Processing'
+    description 'NLP tasks related to LAPPS.'
+}
+news "Domain added: ${DOMAIN}"
+
+}
+///////////////////////</DOMAIN>/////////////////////////////////
+
+
+///////////////////////<PROTOCOL>/////////////////////////////////
+if ( ! IS_DUPLICATE ) {
+
+protocol {
+	id 'SOAP_RPC_ENCODED'
+	name 'SOAP RPC Encoded'
+	description 'RPC Encoded SOAP messages.'
+}
+
+protocol {
+    id 'REST'
+    name 'REST'
+    description 'RESTful web services.'
+}
+
+} //IS_DUPLICATE
+///////////////////////</PROTOCOL>/////////////////////////////////
+
+
+
+///////////////////////<RESOURCE>/////////////////////////////////
+LANG = 'resource.meta.lang'
+SIZE = 'resource.meta.size'
+UNIT = 'resource.meta.unit'
+
+if ( ! IS_DUPLICATE ) {
+
+resourceMetaAttribute {
+	id LANG
+	name 'Language'
+	domain DOMAIN
+	description 'The language of the resource.'
+	type 'resource.type.corpus'
+}
+
+resourceMetaAttribute {
+	id SIZE
+	name 'Size'
+	domain DOMAIN
+	description 'The size of the resource'
+	type 'resource.type.corpus'
+}
+
+resourceMetaAttribute {
+	id UNIT
+	name 'Unit'
+	domain DOMAIN
+	description 'The unit of the Size attribute (KB, words, etc.)'
+	type 'resource.type.corpus'
+}
+
+resourceType {
+    id 'resource.type.null'
+    name 'The NULL resource type'
+    domain DOMAIN
+    description "A type for resources that do not require a type."
+    attributes LANG, SIZE, UNIT
+}
+
+
+resourceType {
+	id 'resource.type.corpus'
+	name 'Corpus'
+	domain DOMAIN
+	description 'A resource that contains a single corpus.'
+	attributes LANG, SIZE, UNIT
+}
+
+resourceType {
+	id 'resource.type.corpora'
+	name 'Corpora'
+	domain DOMAIN
+	description 'A resource that contains multiple corpora.'
+	attributes LANG, SIZE, UNIT
+}
+
+resourceType {
+    id 'resource.type.dictionary'
+    name 'Dictionary'
+    domain DOMAIN
+    description 'Dictionary'
+	attributes LANG, SIZE, UNIT
+}
+
+
+news 'LAPPS resources have been registered.'
+
+} //IS_DUPLICATE
+
+///////////////////////</RESOURCE>/////////////////////////////////
+
+
+
+///////////////////////<SERVICE>/////////////////////////////////
+
+LANG='service.meta.lang'
+TYPE='service.meta.type'
+
+if ( ! IS_DUPLICATE ) {
+
+serviceMetaAttribute {
+	id LANG
+	name 'Service language'
+	domain DOMAIN
+	type SERVICE
+	description 'The language(s) the service is able to process.'
+}
+
+serviceMetaAttribute {
+	id TYPE
+	name 'Service type'
+	domain DOMAIN
+	type SERVICE
+	description 'The type of service (POS tagger, sentence splitter, etc.)'
+}
+
+serviceType {
+	id DATASOURCE
+	name 'LAPPS Datasource'
+	domain DOMAIN
+	description 'Services that provide data to other services.'
+	attributes LANG, TYPE
+}
+
+serviceType {
+	id SERVICE
+	name 'LAPPS Web Service'
+	domain DOMAIN
+	description 'LAPPS web services.'
+	attributes LANG, TYPE
+}
+
+serviceType {
+	id OTHER_SERVICE
+	name 'Other Web Service'
+	domain DOMAIN
+	description 'Other web services.'
+	attributes LANG, TYPE
+}
+
+news 'LAPPS service types and attributes have been registered.'
+
+} //IS_DUPLICATE
+
+///////////////////////</SERVICE>/////////////////////////////////
+
+///////////////////////<INTERFACE>/////////////////////////////////
+wsdlWebService='WebService.wsdl'
+wsdlDataSource='Datasource.wsdl'
+wsdlOtherService='OtherService.wsdl'
+
+
+// Update to absolute path.
+import static groovy.io.FileType.FILES
+new File('.').eachFileRecurse(FILES) {
+    if(it.name.endsWith(wsdlWebService))
+        wsdlWebService = it.getAbsolutePath()
+
+    if(it.name.endsWith(wsdlDataSource))
+        wsdlDataSource = it.getAbsolutePath()
+}
+
+
+// If not EXIST .
+if(!new File(wsdlWebService).exists())
+    new File(wsdlWebService).write("${urlWebService}".toURL().text)
+if(!new File(wsdlDataSource).exists())
+    new File(wsdlDataSource).write("${urlDataSource}".toURL().text)
+if(!new File(wsdlOtherService).exists())
+    new File(wsdlOtherService).write("${SERVICE_WSDL}".toURL().text)
+
+if(new File(wsdlWebService).exists())
+    serviceInterfaceDefinition {
+        name 'LAPPS DataSource'
+        domain DOMAIN
+        type DATASOURCE
+        protocol 'SOAP_RPC_ENCODED'
+        url "file:${wsdlDataSource}"
+    }
+
+if(new File(wsdlDataSource).exists())
+    serviceInterfaceDefinition {
+        name 'LAPPS Web Service'
+        domain DOMAIN
+        type SERVICE
+        protocol 'SOAP_RPC_ENCODED'
+        url "file:${wsdlWebService}"
+    }
+
+if(new File(wsdlOtherService).exists())
+    serviceInterfaceDefinition {
+        name 'Other Web Service'
+        domain DOMAIN
+        type OTHER_SERVICE
+        protocol 'SOAP_RPC_ENCODED'
+        url "file:${wsdlOtherService}"
+    }
+
+news 'Added interface definitions for LAPPS web services and data sources.'
+///////////////////////<INTERFACE>/////////////////////////////////
+
+///////////////////////<FUNCTIONS>/////////////////////////////////
+void register_datasources(list) {
+    list.each {
+        register_datasource(it)
+    }
+}
+
+register_datasource = { source ->
+    service {
+        id source.id
+        name source.name
+        url source.url
+        protocol 'SOAP_RPC_ENCODED'
+        domain DOMAIN
+        type DATASOURCE
+        copyright COPYRIGHT
+        resource MASC_ID
+        license APACHE
+        description source.desc
+        allow 'commercial', 'nonprofit', 'research'
+        control 'client', 'server'
+        federate true
+        attributes {
+        	lang 'en-US'
+        }
+    }
+    news "Configured ${source.name}"
+}
+
+register_services = { list ->
+    list.each {
+        register_service(it)
+    }
+}
+
+register_service = { svc ->
+    service {
+        id svc.id
+        name svc.name
+        url svc.url
+        protocol 'SOAP_RPC_ENCODED'
+        domain DOMAIN
+        type SERVICE
+        copyright COPYRIGHT
+        resource NONE_ID
+        license svc.license
+        description svc.desc
+        allow 'commercial', 'nonprofit', 'research'
+        control 'client', 'server'
+        federate true
+        attributes {
+        	lang 'en-US'
+        }
+    }
+    news "Configured ${svc.name}"
+}
+
+register_others = { list ->
+    list.each {
+        register_other(it)
+    }
+}
+
+register_other = { svc ->
+    service {
+        id svc.id
+        name svc.name
+        url svc.url
+        protocol 'SOAP_RPC_ENCODED'
+        domain DOMAIN
+        type OTHER_SERVICE
+        copyright COPYRIGHT
+        resource NONE_ID
+        license svc.license
+        description svc.desc
+        allow 'commercial', 'nonprofit', 'research'
+        control 'client', 'server'
+        federate true
+        attributes {
+        	lang 'en-US'
+        }
+    }
+    news "Configured ${svc.name}"
+}
+
+register_converter = { converter ->
+    service {
+        id converter.id
+        name converter.name
+        url converter.url
+        protocol 'SOAP_RPC_ENCODED'
+        domain DOMAIN
+        type SERVICE
+        copyright COPYRIGHT
+        resource NONE_ID
+        license APACHE
+        description converter.desc
+        allow 'commercial', 'nonprofit', 'research'
+        control 'client', 'server'
+        federate true
+        attributes {
+        	lang 'any'
+        }
+    }
+    news "Registered ${converter.name}"
+}
+
+/////////////////////</FUNCTIONS>//////////////////////////////////
+
+
+///////////////////////<DATABASE>/////////////////////////////////
+
+database {
+    url "jdbc:postgresql://localhost/${DATABASE}"
+    username "${ROLENAME}"
+    password "${PASSWORD}"
+}
+///////////////////////</DATABASE>/////////////////////////////////
+
+
+///////////////////////<USER>/////////////////////////////////
+if ( ! IS_DUPLICATE ) {
+
+user {
+    id 'tester'
+    password 'tester'
+    name 'Tester'
+    address '415 South Street, Waltham, MA 02454, USA'
+    email 'marc@cs.brandeis.edu'
+    homepage 'http://eldrad.cs-i.brandeis.edu:8080/'
+    organization 'Computer Science Department, Brandeis University'
+}
+
+news 'Registered test user.'
+
+} //IS_DUPLICATE
+
+///////////////////////</USER>/////////////////////////////////
+
+///////////////////////<SERVICES>/////////////////////////////////
+if ( ! IS_DUPLICATE ) {
+
+resource {
+    id NONE_ID
+    copyright COPYRIGHT
+    license APACHE
+    description 'A resource for services that do not require a resource.'
+    name 'None'
+    domain DOMAIN
+    type NONE_TYPE
+    attributes {
+    	lang 'none'
+    }
+}
+
+} //IS_DUPLICATE
+
+
+
+
+services = [
+    [
+      id:"${SERVICE_CLASS}.v${VERSION}",
+      name:"${SERVICE_CLASS} (v${VERSION})",
+      url:"${ROOT}/${SERVICE_CLASS}",
+      desc:"LappsGrid ${SERVICE_CLASS}",
+      lang:'(English)',
+      license:License
+    ],
+]
+
+services.each {
+    comment it.name
+    register_other(it)
+}
+
+news 'The LAPPS node has been configured via LDDL'
+///////////////////////</SERVICES>/////////////////////////////////
