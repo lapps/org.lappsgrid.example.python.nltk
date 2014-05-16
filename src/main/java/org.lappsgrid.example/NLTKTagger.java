@@ -5,16 +5,29 @@ import org.lappsgrid.api.WebService;
 import org.lappsgrid.core.DataFactory;
 import org.lappsgrid.discriminator.DiscriminatorRegistry;
 import org.lappsgrid.discriminator.Types;
+import org.lappsgrid.pycaller.PyCaller;
+import org.lappsgrid.pycaller.PyCallerException;
 import org.lappsgrid.serialization.json.JSONObject;
 import org.lappsgrid.serialization.json.JsonTaggerSerialization;
 import org.lappsgrid.vocabulary.Annotations;
 import org.lappsgrid.vocabulary.Features;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class NLTKTagger implements WebService {
     public static final  String VERSION = "0.0.1-SNAPSHOT";
+
+    File pythonFile = null;
+
     public NLTKTagger(){
+        try{
+            pythonFile = new File(this.getClass().getResource("/nltk_tagger.py").toURI());
+            System.out.println(pythonFile.getAbsolutePath());
+        }catch (URISyntaxException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -42,24 +55,30 @@ public class NLTKTagger implements WebService {
                 json.setProducer(this.getClass().getName() + ":" + VERSION);
                 json.setType("annotation:tagger");
 
-//                // Stanford Tagger
-//                Annotation annotation = new Annotation(text);
-//                snlp.annotate(annotation);
-//                // sentences
-//                List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-//                ArrayList<HashMap<String, String>> res = new ArrayList<HashMap<String, String>>();
-//
-//                for (CoreMap sentence : sentences) {
-//                    for (CoreLabel label : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-//                        JSONObject ann = json.newAnnotation();
-//                        // text
-//                        String word = label.get(CoreAnnotations.TextAnnotation.class);
-//                        json.setWord(ann, word);
-//                        // pos
-//                        String pos = label.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-//                        json.setCategory(ann, pos);
-//                    }
-//                }
+                // [('How', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]
+                List words = null;
+                try {
+                    words = (List)PyCaller.call(pythonFile, "tagger", text);
+                } catch (PyCallerException e) {
+                    e.printStackTrace();
+                    String message = "Python call error: " + e;
+                    return DataFactory.error(message);
+                }
+
+                // NLTK Tagger
+
+                for (Object obj : words) {
+                    Object [] token = (Object[])obj;
+
+                    JSONObject ann = json.newAnnotation();
+                    // text
+                    String word = (String)token[0];
+                    json.setWord(ann, word);
+                    // pos
+                    String pos = (String)token[1];
+                    json.setCategory(ann, pos);
+                }
+
                 return DataFactory.json(json.toString());
 
             } else  if (discriminator == Types.JSON) {
@@ -69,24 +88,29 @@ public class NLTKTagger implements WebService {
                 json.setProducer(this.getClass().getName() + ":" + VERSION);
                 json.setType("annotation:tagger");
 
-//                // Stanford Tagger
-//                Annotation annotation = new Annotation(json.getTextValue());
-//                snlp.annotate(annotation);
-//                // sentences
-//                List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-//                ArrayList<HashMap<String, String>> res = new ArrayList<HashMap<String, String>>();
+                // [('How', 'WRB'), ('are', 'VBP'), ('you', 'PRP'), ('?', '.')]
+                List words = null;
+                try {
+                    words = (List)PyCaller.call(pythonFile, "tagger", json.getTextValue());
+                } catch (PyCallerException e) {
+                    e.printStackTrace();
+                    String message = "Python call error: " + e;
+                    return DataFactory.error(message);
+                }
 
-//                for (CoreMap sentence : sentences) {
-//                    for (CoreLabel label : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-//                        JSONObject ann = json.newAnnotation();
-//                        // text
-//                        String word = label.get(CoreAnnotations.TextAnnotation.class);
-//                        json.setWord(ann, word);
-//                        // pos
-//                        String pos = label.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-//                        json.setCategory(ann, pos);
-//                    }
-//                }
+                // NLTK Tagger
+
+                for (Object obj : words) {
+                    Object [] token = (Object[])obj;
+
+                    JSONObject ann = json.newAnnotation();
+                    // text
+                    String word = (String)token[0];
+                    json.setWord(ann, word);
+                    // pos
+                    String pos = (String)token[1];
+                    json.setCategory(ann, pos);
+                }
                 return DataFactory.json(json.toString());
             } else {
                 String name = DiscriminatorRegistry.get(discriminator);
