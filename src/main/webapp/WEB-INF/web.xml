@@ -46,7 +46,6 @@
 		<init-param>
 			<param-name>wsddBeanNamespaceMappings</param-name>
 			<param-value>
-				org.lappsgrid, http://lapps.anc.org/
 			</param-value>
 		</init-param>
 	</servlet>
